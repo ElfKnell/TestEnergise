@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		C640965A2E2BD82500D81870 /* DataChate.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C64096582E2BD82500D81870 /* DataChate.xcdatamodeld */; };
 		C64096E12E2FF87100D81870 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C64096E02E2FF87100D81870 /* Alamofire */; };
+		C646D7AF2E30E8AF006448EE /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C646D7AE2E30E898006448EE /* .gitignore */; };
+		C646D7B12E30E90E006448EE /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = C646D7B02E30E906006448EE /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +29,8 @@
 /* Begin PBXFileReference section */
 		C64095FE2E2B7BB600D81870 /* TestEnergise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestEnergise.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C64096592E2BD82500D81870 /* DataChate.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataChate.xcdatamodel; sourceTree = "<group>"; };
+		C646D7AE2E30E898006448EE /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		C646D7B02E30E906006448EE /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -65,6 +69,8 @@
 		C64095F52E2B7BB600D81870 = {
 			isa = PBXGroup;
 			children = (
+				C646D7B02E30E906006448EE /* README.md */,
+				C646D7AE2E30E898006448EE /* .gitignore */,
 				C64096582E2BD82500D81870 /* DataChate.xcdatamodeld */,
 				C64096002E2B7BB600D81870 /* TestEnergise */,
 				C64095FF2E2B7BB600D81870 /* Products */,
@@ -149,6 +155,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C646D7B12E30E90E006448EE /* README.md in Resources */,
+				C646D7AF2E30E8AF006448EE /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
