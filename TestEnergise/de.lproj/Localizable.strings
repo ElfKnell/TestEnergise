@@ -1,0 +1,40 @@
+/* 
+  Localizable.strings
+  TestEnergise
+
+  Created by Andrii Kyrychenko on 19/07/2025.
+  
+*/
+
+"home" = "Heim";
+"information" = "IP Informationen";
+"history" = "Geschichte";
+"add" = "Hinzufügen";
+"preview" = "vorschau";
+"preview_label" = "Vorschau";
+"delete" = "löschen";
+"created" = "Erstellt";
+"dateless" = "Kein Datum";
+"settings" = "Einstellungen";
+"rate_the_app" = "App bewerten";
+"share_the_app" = "App teilen";
+"contact_us" = "Kontakt aufnehmen";
+"invalidURL_error" = "Ungültige URL für die IP-Informationsanfrage.";
+"invalid_response_error" = "Ungültige Serverantwort.";
+"no_data_error" = "Keine Daten vom Server empfangen.";
+"api_error" = "API-Fehler:";
+"unknown_error" = "Unbekannter Fehler";
+"error" = "Fehler";
+"update_data" = "Daten aktualisieren";
+"unknown_city" = "Unbekannte Stadt";
+"unknown_country" = "Unbekanntes Land";
+"IP_address" = "IP-Adresse:";
+"status" = "Status:";
+"country" = "Land:";
+"country_code" = "Ländercode:";
+"region" = "Region:";
+"city" = "Stadt:";
+"postal_code" = "Postleitzahl:";
+"time_zone" = "Zeitzone:";
+"provider" = "Anbieter:";
+"organization" = "Organisation:";

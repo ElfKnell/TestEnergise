@@ -1,0 +1,40 @@
+/* 
+  Localizable.strings
+  TestEnergise
+
+  Created by Andrii Kyrychenko on 19/07/2025.
+  
+*/
+
+"home" = "Home";
+"information" = "IP Informations";
+"history" = "History";
+"add" = "Add";
+"preview" = "preview";
+"preview_label" = "Preview";
+"delete" = "delete";
+"created" = "Created";
+"dateless" = "No date";
+"settings" = "Settings";
+"rate_the_app" = "Rate the app";
+"share_the_app" = "Share the app";
+"contact_us" = "Contact us";
+"invalidURL_error" = "Invalid URL for IP information request.";
+"invalid_response_error" = "Invalid server response.";
+"no_data_error" = "No data received from the server.";
+"api_error" = "API error:";
+"unknown_error" = "Unknown error";
+"error" = "Error";
+"update_data" = "Update data";
+"unknown_city" = "Unknown city";
+"unknown_country" = "Unknown country";
+"IP_address" = "IP address:";
+"status" = "Status:";
+"country" = "Country:";
+"country_code" = "Country code:";
+"region" = "Region:";
+"city" = "City:";
+"postal_code" = "Postal code:";
+"time_zone" = "Time zone:";
+"provider" = "Provider:";
+"organization" = "Organization:";

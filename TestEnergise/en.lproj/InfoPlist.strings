@@ -1,0 +1,10 @@
+/* 
+  InfoPlist.strings
+  TestEnergise
+
+  Created by Andrii Kyrychenko on 19/07/2025.
+  
+*/
+
+CFBundleDisplayName = "Test Energise";
+

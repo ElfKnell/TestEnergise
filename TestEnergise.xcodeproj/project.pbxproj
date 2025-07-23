@@ -6,15 +6,34 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C640965A2E2BD82500D81870 /* DataChate.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = C64096582E2BD82500D81870 /* DataChate.xcdatamodeld */; };
+		C64096E12E2FF87100D81870 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = C64096E02E2FF87100D81870 /* Alamofire */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C64096E52E2FFC5A00D81870 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		C64095FE2E2B7BB600D81870 /* TestEnergise.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestEnergise.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C64096592E2BD82500D81870 /* DataChate.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DataChate.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		C64096102E2B7BB800D81870 /* Exceptions for "TestEnergise" folder in "TestEnergise" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
+				"/Localized: Info.plist",
 			);
 			target = C64095FD2E2B7BB600D81870 /* TestEnergise */;
 		};
@@ -36,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C64096E12E2FF87100D81870 /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +65,7 @@
 		C64095F52E2B7BB600D81870 = {
 			isa = PBXGroup;
 			children = (
+				C64096582E2BD82500D81870 /* DataChate.xcdatamodeld */,
 				C64096002E2B7BB600D81870 /* TestEnergise */,
 				C64095FF2E2B7BB600D81870 /* Products */,
 			);
@@ -68,6 +89,7 @@
 				C64095FA2E2B7BB600D81870 /* Sources */,
 				C64095FB2E2B7BB600D81870 /* Frameworks */,
 				C64095FC2E2B7BB600D81870 /* Resources */,
+				C64096E52E2FFC5A00D81870 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -78,6 +100,7 @@
 			);
 			name = TestEnergise;
 			packageProductDependencies = (
+				C64096E02E2FF87100D81870 /* Alamofire */,
 			);
 			productName = TestEnergise;
 			productReference = C64095FE2E2B7BB600D81870 /* TestEnergise.app */;
@@ -104,9 +127,13 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = C64095F52E2B7BB600D81870;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C64096DF2E2FF87100D81870 /* XCRemoteSwiftPackageReference "Alamofire" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C64095FF2E2B7BB600D81870 /* Products */;
 			projectDirPath = "";
@@ -132,6 +159,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C640965A2E2BD82500D81870 /* DataChate.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -147,12 +175,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DBL7348NTB;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TestEnergise/Info.plist;
+				INFOPLIST_FILE = TestEnergise/en.lproj/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -175,12 +203,12 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = DBL7348NTB;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = TestEnergise/Info.plist;
+				INFOPLIST_FILE = TestEnergise/en.lproj/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -199,6 +227,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -263,6 +292,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -337,6 +367,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C64096DF2E2FF87100D81870 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C64096E02E2FF87100D81870 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C64096DF2E2FF87100D81870 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		C64096582E2BD82500D81870 /* DataChate.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				C64096592E2BD82500D81870 /* DataChate.xcdatamodel */,
+			);
+			currentVersion = C64096592E2BD82500D81870 /* DataChate.xcdatamodel */;
+			path = DataChate.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = C64095F62E2B7BB600D81870 /* Project object */;
 }
