@@ -9,20 +9,25 @@ import Foundation
 
 struct IPInfoModel: Codable {
     
-    let status: String?
+    let success: Bool?
     let message: String?
 
-    let query: String?
+    let ip: String?
+    let continent: String?
+    let continentCode: String?
     let country: String?
     let countryCode: String?
     let region: String?
-    let regionName: String?
+    let regionCode: String?
     let city: String?
-    let zip: String?
-    let lat: Double?
-    let lon: Double?
-    let timezone: String?
-    let isp: String?
-    let org: String?
-    let `as`: String?
+    let postal: String?
+    let latitude: Double?
+    let longitude: Double?
+//    let timezone: String?
+//    let isp: String?
+//    let org: String?
+//    let `as`: String?
 }
+
+
+    

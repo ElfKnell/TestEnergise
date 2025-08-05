@@ -8,39 +8,47 @@
 import Foundation
 import CoreData
 
-class MessageService {
+final class MessageService: MessageServiceProtocol {
     
-    let serviceContainer: ServiceContainer
+    private let serviceContainer: ServiceContainer
     
-    init() {
-        self.serviceContainer = ServiceContainer.shared
+    init(serviceContainer: ServiceContainer) {
+        self.serviceContainer = serviceContainer
     }
     
-    func fetchingMessages() -> [Message] {
+    func fetchMessages() -> [Message] {
         let req = Message.fetchRequest()
-        guard let messages = try? serviceContainer.persistentContainer.viewContext.fetch(req) else {
+        let context = serviceContainer.viewContext
+        guard let messages = try? context.fetch(req) else {
             return []
         }
         return messages
         
     }
     
-    func fetchingMessager(chat: Chat) -> [Message] {
-        let message = chat.messages as? Set<Message> ?? []
-        return message.sorted {
-            ($0.timestamp ?? .distantPast) > ($1.timestamp ?? .distantPast)
-        }
+    func fetchMessages(chat: Chat) -> [Message] {
+        
+        let context = serviceContainer.viewContext
+        let request: NSFetchRequest<Message> = Message.fetchRequest()
+        request.predicate = NSPredicate(format: "chat == %@", chat)
+        request.sortDescriptors = [NSSortDescriptor(key: "timestamp", ascending: false)]
+        
+        return (try? context.fetch(request)) ?? []
     }
     
-    func creatMessage(text: String, chat: Chat) {
+    func createMessage(text: String, chat: Chat, isUserMessage: Bool) -> Message? {
         
-        let message = Message(context: serviceContainer.persistentContainer.viewContext)
+        let context = serviceContainer.viewContext
+        let message = Message(context: context)
         message.id = UUID().uuidString
         message.text = text
         message.timestamp = Date()
         message.chat = chat
+        message.isFromCurrentUser = isUserMessage
         
         serviceContainer.saveContext()
+        
+        return message
     }
 
 }

@@ -8,25 +8,27 @@
 import Foundation
 import CoreData
 
-class ChatService {
+final class ChatService: ChatServiceProtocol {
     
-    let serviceContainer: ServiceContainer
+    private let serviceContainer: ServiceContainer
     
-    init() {
-        self.serviceContainer = ServiceContainer.shared
+    init(serviceContainer: ServiceContainer) {
+        self.serviceContainer = serviceContainer
     }
     
-    func fetchingChats() -> [Chat] {
-        let req = Chat.fetchRequest()
-        guard let chats = try? serviceContainer.persistentContainer.viewContext.fetch(req) else {
+    func fetchChats() -> [Chat] {
+        let request: NSFetchRequest<Chat> = Chat.fetchRequest()
+        let context = serviceContainer.viewContext
+        guard let chats = try? context.fetch(request) else {
             return []
         }
         return chats.sorted { $0.dateCreate ?? .distantPast > $1.dateCreate ?? .distantPast }
         
     }
     
-    func creatChat() -> Chat {
-        let chat = Chat(context: serviceContainer.persistentContainer.viewContext)
+    func createChat() -> Chat {
+        let context = serviceContainer.viewContext
+        let chat = Chat(context: context)
         chat.id = UUID().uuidString
         chat.dateCreate = Date()
         
@@ -35,7 +37,7 @@ class ChatService {
     }
 
     func delete(_ chat: Chat) {
-        let context = serviceContainer.persistentContainer.viewContext
+        let context = serviceContainer.viewContext
         context.delete(chat)
         
         serviceContainer.saveContext()

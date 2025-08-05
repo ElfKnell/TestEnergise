@@ -7,17 +7,31 @@
 
 import Foundation
 
-class PreviewChatPresenter {
+class PreviewChatPresenter: PreviewChatPresenterProtocol {
     
-    let messageService: MessageService
+    weak var view: PreviewChatViewProtocol?
+    //private(set) var messages: [String] = []
+    private(set) var messages: [Message] = []
     
-    init(messageService: MessageService) {
+    private let chat: Chat
+    let messageService: MessageServiceProtocol
+    
+    init(chat: Chat, messageService: MessageServiceProtocol) {
+        self.chat = chat
         self.messageService = messageService
     }
     
-    func fetchingMessages(_ chat: Chat) -> [String] {
-        let messages = messageService.fetchingMessager(chat: chat)
-        let messagesString = messages.map { $0.text ?? "" }
-        return messagesString
+    func viewDidLoad() {
+        view?.setChatTitle(chat.dateCreate?.formatted() ?? NSLocalizedString("preview_label", comment: "Default chat title"))
+        fetchingMessages()
+    }
+    
+    private func fetchingMessages() {
+        view?.showLoadingIndicator()
+        
+        self.messages = messageService.fetchMessages(chat: self.chat)
+        
+        view?.hideLoadingIndicator()
+        view?.displayMessages(self.messages)
     }
 }

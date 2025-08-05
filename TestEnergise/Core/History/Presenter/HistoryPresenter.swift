@@ -7,31 +7,61 @@
 
 import Foundation
 
-class HistoryPresenter {
+class HistoryPresenter: HistoryPresenterProtocol {
     
-    var previews: [ChatPreview] = []
+    weak var view: HistoryViewProtocol?
     
-    let chatService: ChatService
-    let messageService: MessageService
+    private(set) var previews: [ChatPreview] = []
     
-    init(chatService: ChatService, messageService: MessageService) {
+    private let chatService: ChatServiceProtocol
+    let messageService: MessageServiceProtocol
+    
+    init(chatService: ChatServiceProtocol, messageService: MessageServiceProtocol) {
         self.chatService = chatService
         self.messageService = messageService
     }
     
-    func fetchingChats() {
-        let chats = chatService.fetchingChats()
+    func viewDidLoad() {
+    }
+    
+    func viewWillAppear() {
+        fetchingChats()
+    }
+    
+    func didSelectChat(at section: Int) {
+        guard section < previews.count else {
+            view?.showErrorMessage(NSLocalizedString("chat_not_found_error", comment: "Error message for chat not found."))
+            return
+        }
+        let selectedChat = previews[section].chat
+        view?.navigateToChatDetail(for: selectedChat)
+    }
+    
+    func didTapDeleteChat(at section: Int) {
+        guard section < previews.count else {
+            view?.showErrorMessage(NSLocalizedString("chat_not_found_error", comment: "Error message for chat not found."))
+            return
+        }
+        let chatToDelete = previews[section].chat
+        chatService.delete(chatToDelete)
         
-        previews = chats.map { chat in
-            let allMessages = messageService.fetchingMessager(chat: chat)
+        previews.remove(at: section)
+        view?.deleteSection(IndexSet(integer: section))
+    }
+
+    private func fetchingChats() {
+        
+        view?.showLoadingIndicator()
+        let chats = chatService.fetchChats()
+        
+        self.previews = chats.map { chat in
+            let allMessages = messageService.fetchMessages(chat: chat)
             let firstTwo = Array(allMessages.prefix(2))
             return ChatPreview(chat: chat, messages: firstTwo)
         }
+        
+        view?.hideLoadingIndicator()
+        view?.displayChats(self.previews)
     }
-    
-    func deleteChat(at index: Int) {
-        let chat = previews[index].chat
-        chatService.delete(chat)
-        previews.remove(at: index)
-    }
+
 }

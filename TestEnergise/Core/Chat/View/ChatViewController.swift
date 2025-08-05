@@ -9,30 +9,33 @@ import UIKit
 
 class ChatViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    private var collectionView: UICollectionView!
-    private let inputField = UITextField()
+    var presenter: ChatPresenterProtocol!
+    
+    var collectionView: UICollectionView!
+    var activityIndicator: UIActivityIndicatorView!
+    let inputField = UITextField()
     private let addButton = UIButton(type: .system)
-    var messages: [String] = []
-    var presenter: ChatPresenter!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        presenter = ChatPresenter(chatService: ChatService(), messageService: MessageService())
-        presenter.view = self
-        
-        view.backgroundColor = .white
+        view.backgroundColor = .systemBackground
         title = NSLocalizedString("home", comment: "")
+        
         setupCollectionView()
         setupInputArea()
+        setupActivityIndicator()
+        
+        presenter.view = self
+        presenter.viewDidLoad()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        presenter.chat = nil
-        messages = []
+        presenter.viewDidDisappear()
         collectionView.reloadData()
+        
     }
     
     private func setupCollectionView() {
@@ -41,13 +44,17 @@ class ChatViewController: UIViewController, UICollectionViewDataSource, UICollec
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 10, left: 16, bottom: 10, right: 16)
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
         
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        
+        collectionView.register(MessageChatViewCell.self,
+                                forCellWithReuseIdentifier: MessageChatViewCell.reuseIdentifier)
         
         view.addSubview(collectionView)
         
@@ -62,71 +69,78 @@ class ChatViewController: UIViewController, UICollectionViewDataSource, UICollec
         
         let inputContainer = UIView()
         inputContainer.translatesAutoresizingMaskIntoConstraints = false
+        inputContainer.backgroundColor = .systemBackground
         view.addSubview(inputContainer)
         
-        inputField.placeholder = "Enter message"
+        inputField.placeholder = NSLocalizedString("enter_message_placeholder", comment: "Placeholder for message input field")
         inputField.borderStyle = .roundedRect
         inputField.translatesAutoresizingMaskIntoConstraints = false
+        inputField.returnKeyType = .send
+        inputField.delegate = self
         inputContainer.addSubview(inputField)
         
-        addButton.setTitle(NSLocalizedString("add", comment: ""), for: .normal)
+        addButton.setTitle(NSLocalizedString("add", comment: "Send button title"), for: .normal)
         addButton.titleLabel?.font = .boldSystemFont(ofSize: 16)
         addButton.translatesAutoresizingMaskIntoConstraints = false
+        addButton.addTarget(self, action: #selector(sendButtonTapped), for: .touchUpInside)
         inputContainer.addSubview(addButton)
-        addButton.addTarget(self, action: #selector(addButtonTapped), for: .touchUpInside)
         
         NSLayoutConstraint.activate([
-            inputContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            inputContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            inputContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -8),
-            inputContainer.heightAnchor.constraint(equalToConstant: 44),
+            inputContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            inputContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            inputContainer.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            inputContainer.heightAnchor.constraint(equalToConstant: 80),
             
-            inputField.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor),
-            inputField.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor),
-            inputField.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
-            inputField.heightAnchor.constraint(equalToConstant: 36),
+            inputField.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor, constant: 16),
+            inputField.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor, constant: -16),
+            inputField.topAnchor.constraint(equalTo: inputContainer.topAnchor),
+            inputField.widthAnchor.constraint(equalToConstant: 60),
+            inputField.heightAnchor.constraint(equalToConstant: 40),
             
-            addButton.leadingAnchor.constraint(equalTo: inputField.trailingAnchor, constant: 8),
-            addButton.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor),
-            addButton.centerYAnchor.constraint(equalTo: inputContainer.centerYAnchor),
-            addButton.widthAnchor.constraint(equalToConstant: 60)
+            addButton.topAnchor.constraint(equalTo: inputField.bottomAnchor),
+            addButton.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor, constant: -16),
+            addButton.widthAnchor.constraint(equalToConstant: 40)
         ])
         
         collectionView.bottomAnchor.constraint(equalTo: inputContainer.topAnchor, constant: -8).isActive = true
     }
     
+    private func setupActivityIndicator() {
+        
+        activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+    
     @objc
-    private func addButtonTapped() {
+    fileprivate func sendButtonTapped() {
         
         guard let text = inputField.text, !text.trimmingCharacters(in: .whitespaces).isEmpty else {
             return
         }
         
-        presenter.createMessage(text: text)
-        inputField.text = ""
+        presenter.sendMessage(text: text)
+
     }
 
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messages.count
+        presenter.messages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
         
-        cell.contentView.subviews.forEach {
-            $0.removeFromSuperview()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MessageChatViewCell.reuseIdentifier, for: indexPath) as? MessageChatViewCell else {
+            fatalError("Unable to dequeue MessageCell")
         }
         
-        let lable = UILabel()
-        lable.text = messages[indexPath.item]
-        lable.textColor = .black
-        lable.textAlignment = .left
-        lable.frame = cell.contentView.bounds
-        lable.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        
-        cell.contentView.addSubview(lable)
-        cell.layer.cornerRadius = 8
-        cell.layer.masksToBounds = true
+        let messageVM = presenter.messages[indexPath.item]
+        cell.configure(with: messageVM)
         
         return cell
     }
@@ -143,14 +157,28 @@ class ChatViewController: UIViewController, UICollectionViewDataSource, UICollec
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.bounds.width - 10
-        return CGSize(width: width, height: 50)
+        
+        let messageVM = presenter.messages[indexPath.item]
+        let dummyCell = MessageChatViewCell(frame: .zero)
+        dummyCell.configure(with: messageVM)
+        
+        guard let flowLayout = collectionViewLayout as? UICollectionViewFlowLayout else {
+            return CGSize(width: collectionView.bounds.width, height: 44)
+        }
+        
+        let targetWidth = collectionView.bounds.width - flowLayout.sectionInset.left - flowLayout.sectionInset.right
+        let size = dummyCell.contentView.systemLayoutSizeFitting(
+            CGSizeMake(targetWidth, UIView.layoutFittingCompressedSize.height),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel)
+        return CGSize(width: targetWidth, height: max(size.height, 44))
     }
 }
 
-extension ChatViewController: ChatViewUpdating {
-    func updateMessage(_ messages: [Message]) {
-        self.messages = messages.map { $0.text ?? "" }
-        collectionView.reloadData()
+extension ChatViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        sendButtonTapped()
+        textField.resignFirstResponder()
+        return true
     }
 }

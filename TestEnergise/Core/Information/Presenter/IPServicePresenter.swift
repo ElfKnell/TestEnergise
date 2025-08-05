@@ -10,7 +10,7 @@ import Alamofire
 
 class IPServicePresenter {
     
-    private let baseURL = "http://ip-api.com/json/"
+    private let baseURL = "https://ipwho.is/"
     
     func fetchIPInfo(for ipAddress: String? = nil, completion: @escaping (Result<IPInfoModel, Error>) -> Void) {
         
@@ -31,7 +31,7 @@ class IPServicePresenter {
             .responseDecodable(of: IPInfoModel.self) { response in
                 switch response.result {
                 case .success(let ipInfo):
-                    if ipInfo.status == "success" {
+                    if let _ = ipInfo.success {
                         completion(.success(ipInfo))
                     } else {
                         completion(.failure(IPError.apiError(ipInfo.message ?? NSLocalizedString("unknown_error", comment: ""))))

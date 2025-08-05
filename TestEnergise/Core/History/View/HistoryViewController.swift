@@ -9,24 +9,29 @@ import UIKit
 
 class HistoryViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
 
-    private var collectionView: UICollectionView!
-    private let presenter = HistoryPresenter(chatService: ChatService(),
-                                             messageService: MessageService())
+    var presenter: HistoryPresenterProtocol!
+    
+    var collectionView: UICollectionView!
+    var activityIndicator: UIActivityIndicatorView!
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .white
         title = NSLocalizedString("history", comment: "")
-        setupCollectionView()
         
+        setupCollectionView()
+        setupActivityIndicator()
+        
+        presenter.view = self
+        presenter.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        presenter.fetchingChats()
-        collectionView.reloadData()
+        presenter.viewWillAppear()
     }
 
     private func setupCollectionView() {
@@ -43,10 +48,10 @@ class HistoryViewController: UIViewController, UICollectionViewDelegate, UIColle
         collectionView.dataSource = self
         collectionView.delegate = self
         
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "messageCell")
+        collectionView.register(MessageChatViewCell.self, forCellWithReuseIdentifier: MessageChatViewCell.reuseIdentifier)
         collectionView.register(ChatHeaderView.self,
                                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-                                withReuseIdentifier: "chatHeader")
+                                withReuseIdentifier: ChatHeaderView.chatHeader)
         
         view.addSubview(collectionView)
         
@@ -55,6 +60,19 @@ class HistoryViewController: UIViewController, UICollectionViewDelegate, UIColle
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    private func setupActivityIndicator() {
+        
+        activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+        view.addSubview(activityIndicator)
+        
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ])
     }
     
@@ -68,45 +86,34 @@ class HistoryViewController: UIViewController, UICollectionViewDelegate, UIColle
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "messageCell", for: indexPath)
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MessageChatViewCell.reuseIdentifier, for: indexPath) as? MessageChatViewCell else {
+            fatalError("Unable to dequeue MessageViewCell")
+        }
         let message = presenter.previews[indexPath.section].messages[indexPath.item]
-
-        cell.contentView.subviews.forEach { $0.removeFromSuperview() }
-        let label = UILabel(frame: cell.contentView.bounds)
-        label.text = message.text
-        label.textColor = .black
-        label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 14)
-        cell.contentView.addSubview(label)
+        
+        cell.configure(with: message)
 
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "chatHeader", for: indexPath) as! ChatHeaderView
+        guard kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ChatHeaderView.chatHeader, for: indexPath) as? ChatHeaderView else {
+            return UICollectionReusableView()
+        }
+        
         header.configure(index: indexPath.section,
                          date: presenter.previews[indexPath.section].chat.dateCreate,
                          onOpen: { [weak self] section in
-            guard let self = self else { return }
-            let preview = self.presenter.previews[section]
-            let chatVC = PreviewChatViewController()
-            chatVC.chat = preview.chat
             
-            let transition = CATransition()
-            transition.duration = 0.3
-            transition.type = .push
-            transition.subtype = .fromRight
-            self.navigationController?.view.layer.add(transition, forKey: kCATransition)
-            self.navigationController?.pushViewController(chatVC, animated: true)
-            
+            self?.presenter.didSelectChat(at: section)
         }, onDelete: { [weak self] section in
-            guard let self = self else { return }
             
-            self.presenter.deleteChat(at: section)
-            self.collectionView.performBatchUpdates {
-                self.collectionView.deleteSections(IndexSet(integer: section))
-            }
+            self?.presenter.didTapDeleteChat(at: section)
+            self?.collectionView.reloadData()
         })
         return header
     }

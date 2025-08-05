@@ -38,3 +38,5 @@
 "time_zone" = "Zeitzone:";
 "provider" = "Anbieter:";
 "organization" = "Organisation:";
+"chat_creation_error" = "Fehler beim Erstellen des Chats";
+"enter_message_placeholder" = "Nachricht eingeben";

@@ -143,7 +143,7 @@ class InformationViewController: UIViewController {
         detailsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         mapView.removeAnnotations(mapView.annotations)
         
-        if let lat = ipInfo.lat, let lon = ipInfo.lon {
+        if let lat = ipInfo.latitude, let lon = ipInfo.longitude {
             let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
             let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 100000, longitudinalMeters: 100000)
             mapView.setRegion(region, animated: true)
@@ -155,17 +155,17 @@ class InformationViewController: UIViewController {
             mapView.addAnnotation(annotation)
         }
         
-        addDetailRow(title: NSLocalizedString("IP_address", comment: ""), value: ipInfo.query)
-        addDetailRow(title: NSLocalizedString("status", comment: ""), value: ipInfo.status)
+        addDetailRow(title: NSLocalizedString("IP_address", comment: ""), value: ipInfo.ip)
+        //addDetailRow(title: NSLocalizedString("status", comment: ""), value: ipInfo.success)
         addDetailRow(title: NSLocalizedString("country", comment: ""), value: ipInfo.country)
         addDetailRow(title: NSLocalizedString("country_code", comment: ""), value: ipInfo.countryCode)
-        addDetailRow(title: NSLocalizedString("region", comment: ""), value: ipInfo.regionName)
+        addDetailRow(title: NSLocalizedString("region", comment: ""), value: ipInfo.regionCode)
         addDetailRow(title: NSLocalizedString("city", comment: ""), value: ipInfo.city)
-        addDetailRow(title: NSLocalizedString("postal_code", comment: ""), value: ipInfo.zip)
-        addDetailRow(title: NSLocalizedString("time_zone", comment: ""), value: ipInfo.timezone)
-        addDetailRow(title: NSLocalizedString("provider", comment: ""), value: ipInfo.isp)
-        addDetailRow(title: NSLocalizedString("organization", comment: ""), value: ipInfo.org)
-        addDetailRow(title: "AS:", value: ipInfo.as)
+        addDetailRow(title: NSLocalizedString("postal_code", comment: ""), value: ipInfo.postal)
+//        addDetailRow(title: NSLocalizedString("time_zone", comment: ""), value: ipInfo.timezone)
+//        addDetailRow(title: NSLocalizedString("provider", comment: ""), value: ipInfo.isp)
+//        addDetailRow(title: NSLocalizedString("organization", comment: ""), value: ipInfo.org)
+//        addDetailRow(title: "AS:", value: ipInfo.as)
     }
     
     private func addDetailRow(title: String, value: String?) {

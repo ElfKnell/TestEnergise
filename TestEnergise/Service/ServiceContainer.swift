@@ -10,20 +10,28 @@ import CoreData
 
 class ServiceContainer {
     
-    static let shared = ServiceContainer()
+    private let persistentContainer: NSPersistentContainer
     
-    private init() {}
+    var viewContext: NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
     
-    lazy var persistentContainer: NSPersistentContainer = {
-        
-        let container = NSPersistentContainer(name: "DataChate")
-        container.loadPersistentStores { (storeDescription, error) in
+    lazy var chatService: ChatServiceProtocol = {
+        ChatService(serviceContainer: self)
+    }()
+    
+    lazy var messageService: MessageServiceProtocol = {
+        MessageService(serviceContainer: self)
+    }()
+    
+    init(modelName: String) {
+        persistentContainer = NSPersistentContainer(name: modelName)
+        persistentContainer.loadPersistentStores { (storeDescription, error) in
             if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+                print("Error: \(error)")
             }
         }
-        return container
-    }()
+    }
     
     func saveContext() {
         let context = persistentContainer.viewContext

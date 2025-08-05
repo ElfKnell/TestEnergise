@@ -5,11 +5,11 @@
 //  Created by Andrii Kyrychenko on 21/07/2025.
 //
 
-import Foundation
 import UIKit
 
 class ChatHeaderView: UICollectionReusableView {
     
+    static let chatHeader = "chatHeader"
     private let titleLabel = UILabel()
     private let openButton = UIButton(type: .system)
     private let deleteButton = UIButton(type: .system)
@@ -24,10 +24,16 @@ class ChatHeaderView: UICollectionReusableView {
         backgroundColor = .systemGroupedBackground
         
         titleLabel.font = .systemFont(ofSize: 14, weight: .medium)
-        titleLabel.textColor = .darkGray
+        titleLabel.textColor = .secondaryLabel
         
-        openButton.setTitle(NSLocalizedString("preview", comment: "title for button"), for: .normal)
-        deleteButton.setTitle(NSLocalizedString("delete", comment: "title for button"), for: .normal)
+        let openButtonTitle = NSLocalizedString("preview", comment: "title for button")
+        let deleteButtonTitle = NSLocalizedString("delete", comment: "title for button")
+        
+        openButton.setTitle(openButtonTitle, for: .normal)
+        deleteButton.setTitle(deleteButtonTitle, for: .normal)
+        
+        openButton.accessibilityLabel = openButtonTitle
+        deleteButton.accessibilityLabel = deleteButtonTitle
         
         openButton.addTarget(self, action: #selector(openTapped), for: .touchUpInside)
         deleteButton.addTarget(self, action: #selector(deleteTapped), for: .touchUpInside)
@@ -78,6 +84,13 @@ class ChatHeaderView: UICollectionReusableView {
         } else {
             titleLabel.text = "🗓️ \(NSLocalizedString("dateless", comment: "Label for no date"))"
         }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleLabel.text = nil
+        onOpenCallback = nil
+        onDeleteCallback = nil
     }
     
     required init?(coder: NSCoder) {

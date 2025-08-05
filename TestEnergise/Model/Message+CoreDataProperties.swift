@@ -16,10 +16,11 @@ extension Message {
         return NSFetchRequest<Message>(entityName: "Message")
     }
 
-    @NSManaged public var text: String?
     @NSManaged public var id: String?
+    @NSManaged public var text: String?
     @NSManaged public var timestamp: Date?
     @NSManaged public var chat: Chat?
+    @NSManaged public var isFromCurrentUser: Bool
 
 }
 

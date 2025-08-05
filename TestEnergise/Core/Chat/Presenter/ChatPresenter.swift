@@ -7,89 +7,93 @@
 
 import Foundation
 
-class ChatPresenter {
+class ChatPresenter: ChatPresenterProtocol {
     
     weak var view: ChatViewUpdating?
     
-    let chatService: ChatService
-    let messageService: MessageService
+    private(set) var messages: [Message] = []
+    
+    private let chatService: ChatServiceProtocol
+    private let messageService: MessageServiceProtocol
     
     var chat: Chat?
     
-    let sentences = [
-        "Hello there!",
-        "How are you?",
-        "Nice to meet you.",
-        "What's your name?",
-        "Let's get started.",
-        "I love coding.",
-        "Swift is awesome!",
-        "It's a sunny day.",
-        "Time for a break.",
-        "Have a great day!",
-        "That was fun.",
-        "Try again later.",
-        "I’m feeling good.",
-        "Welcome back!",
-        "Can you help me?",
-        "Let's go now.",
-        "This is exciting!",
-        "I made a mistake.",
-        "Everything is fine.",
-        "See you soon!"
-    ]
-    
-    let germanSentences = [
-        "Hallo da!",
-        "Wie geht’s dir?",
-        "Schön, dich kennenzulernen.",
-        "Wie heißt du?",
-        "Lass uns anfangen.",
-        "Ich liebe Programmieren.",
-        "Swift ist großartig!",
-        "Es ist ein sonniger Tag.",
-        "Zeit für eine Pause.",
-        "Hab einen schönen Tag!",
-        "Das hat Spaß gemacht.",
-        "Versuche es später noch einmal.",
-        "Ich fühle mich gut.",
-        "Willkommen zurück!",
-        "Kannst du mir helfen?",
-        "Lass uns jetzt gehen.",
-        "Das ist spannend!",
-        "Ich habe einen Fehler gemacht.",
-        "Alles ist in Ordnung.",
-        "Bis bald!"
-    ]
-    
-    init(chatService: ChatService, messageService: MessageService) {
+    init(chatService: ChatServiceProtocol, messageService: MessageServiceProtocol) {
         self.chatService = chatService
         self.messageService = messageService
     }
     
-    func createMessage(text: String) {
+    func viewDidLoad() {
+        
+        if let existingChat = chat {
+            loadMessages(for: existingChat)
+        }
+    }
+    
+    func viewDidDisappear() {
+        
+        chat = nil
+        messages = []
+    }
+    
+    func sendMessage(text: String) {
+        
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            return
+        }
+        if self.chat == nil {
+            self.chat = chatService.createChat()
+        }
+        guard let currentChat = self.chat else {
+            view?.showErrorMessage(NSLocalizedString("chat_creation_error", comment: "Error creating chat"))
+            return
+        }
+        
+        let userMessage = messageService.createMessage(text: text, chat: currentChat, isUserMessage: true)
+        if let userMessage {
+            self.messages.append(userMessage)
+            view?.appendNewMessage(userMessage)
+            view?.clearMessageInput()
+            view?.scrollToBottom()
+        }
         
         let currentLanguage = Locale.current.region
-        let randomNumber = Int.random(in: 0...19)
+        
+        let answersData = AnswersData()
         var answers = [String]()
         if currentLanguage == "DE" {
-            answers = germanSentences
+            answers = answersData.germanSentences
         } else {
-            answers = sentences
+            answers = answersData.sentences
+        }
+        let randomNumber = Int.random(in: 0..<answers.count)
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+            guard let self = self else { return }
+            let aiMessage = messageService.createMessage(text: answers[randomNumber], chat: currentChat, isUserMessage: false)
+            if let aiMessage {
+                self.messages.append(aiMessage)
+                self.view?.appendNewMessage(aiMessage)
+                self.view?.scrollToBottom()
+            }
         }
         
-        if self.chat == nil {
-            self.chat = chatService.creatChat()
-        }
         
-        guard let chat = self.chat else { return }
+        let messages = messageService.fetchMessages(chat: currentChat)
         
-        messageService.creatMessage(text: text, chat: chat)
+        view?.displayMessages(messages)
+    }
+    
+    private func loadMessages(for chat: Chat) {
         
-        messageService.creatMessage(text: answers[randomNumber], chat: chat)
+        view?.showLoadingIndicator()
         
-        let messages = messageService.fetchingMessager(chat: chat)
+        let fetchedMessages = messageService.fetchMessages(chat: chat)
+        messages = fetchedMessages
+            .sorted(by: { $0.timestamp ?? Date.distantPast < $1.timestamp ?? Date.distantPast })
         
-        view?.updateMessage(messages)
+        view?.hideLoadingIndicator()
+        view?.displayMessages(messages)
+        view?.scrollToBottom()
     }
 }
