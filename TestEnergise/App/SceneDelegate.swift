@@ -42,14 +42,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         homeNav.tabBarItem.accessibilityLabel = homeTitle
         homeNav.tabBarItem.accessibilityTraits = .button
         
+        let ipPresenter = IPServicePresenter()
         let ipInformationVC = InformationViewController()
+        ipInformationVC.presenter = ipPresenter
         let ipInfoNav = UINavigationController(rootViewController: ipInformationVC)
         let informationTitle = NSLocalizedString("information", comment: "Ip information tab bar title")
         ipInfoNav.tabBarItem = UITabBarItem(title: informationTitle, image: UIImage(systemName: "book.fill"), tag: 1)
         ipInfoNav.tabBarItem.accessibilityLabel = informationTitle
         ipInfoNav.tabBarItem.accessibilityTraits = .button
         
+        let settingsPresenter = SettingsPresenter()
         let settingsVC = SettingsViewController()
+        settingsVC.presenter = settingsPresenter
         let settingsNav = UINavigationController(rootViewController: settingsVC)
         let settingsTitle = NSLocalizedString("settings", comment: "Settings tab bar title")
         settingsNav.tabBarItem = UITabBarItem(title: settingsTitle, image: UIImage(systemName: "gearshape.fill"), tag: 3)

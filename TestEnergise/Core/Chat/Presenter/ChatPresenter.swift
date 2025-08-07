@@ -9,7 +9,7 @@ import Foundation
 
 class ChatPresenter: ChatPresenterProtocol {
     
-    weak var view: ChatViewUpdating?
+    weak var view: ChatViewProtocol?
     
     private(set) var messages: [Message] = []
     
@@ -68,9 +68,10 @@ class ChatPresenter: ChatPresenterProtocol {
         }
         let randomNumber = Int.random(in: 0..<answers.count)
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
             guard let self = self else { return }
-            let aiMessage = messageService.createMessage(text: answers[randomNumber], chat: currentChat, isUserMessage: false)
+            guard let currentChat = self.chat else { return }
+            let aiMessage = self.messageService.createMessage(text: answers[randomNumber], chat: currentChat, isUserMessage: false)
             if let aiMessage {
                 self.messages.append(aiMessage)
                 self.view?.appendNewMessage(aiMessage)

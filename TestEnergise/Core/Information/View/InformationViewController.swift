@@ -10,7 +10,7 @@ import MapKit
 
 class InformationViewController: UIViewController {
 
-    private let apiService = IPServicePresenter()
+    var presenter: IPServicePresenterProtocol!
     
     lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -71,9 +71,9 @@ class InformationViewController: UIViewController {
         super.viewDidLoad()
 
         title = NSLocalizedString("information", comment: "")
-        
+        presenter.view = self
         setupCollectionView()
-        fetchIPInfo()
+        presenter.viewDidLoad()
     }
 
     private func setupCollectionView() {
@@ -117,58 +117,7 @@ class InformationViewController: UIViewController {
         ])
     }
     
-    private func fetchIPInfo() {
-        
-        activityIndicator.startAnimating()
-        reloadButton.isEnabled = false
-        
-        apiService.fetchIPInfo { [weak self] result in
-            DispatchQueue.main.async {
-                self?.activityIndicator.stopAnimating()
-                self?.reloadButton.isEnabled = true
-                
-                switch result {
-                case .success(let success):
-                    self?.updateUI(with: success)
-                case .failure(let failure):
-                    self?.showErrorAlert(message: failure.localizedDescription)
-                    self?.clearUI()
-                }
-            }
-        }
-    }
-    
-    private func updateUI(with ipInfo: IPInfoModel) {
-        
-        detailsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        mapView.removeAnnotations(mapView.annotations)
-        
-        if let lat = ipInfo.latitude, let lon = ipInfo.longitude {
-            let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-            let region = MKCoordinateRegion(center: coordinate, latitudinalMeters: 100000, longitudinalMeters: 100000)
-            mapView.setRegion(region, animated: true)
-
-            let annotation = MKPointAnnotation()
-            annotation.coordinate = coordinate
-            annotation.title = ipInfo.city ?? NSLocalizedString("unknown_city", comment: "")
-            annotation.subtitle = ipInfo.country ?? NSLocalizedString("unknown_country", comment: "")
-            mapView.addAnnotation(annotation)
-        }
-        
-        addDetailRow(title: NSLocalizedString("IP_address", comment: ""), value: ipInfo.ip)
-        //addDetailRow(title: NSLocalizedString("status", comment: ""), value: ipInfo.success)
-        addDetailRow(title: NSLocalizedString("country", comment: ""), value: ipInfo.country)
-        addDetailRow(title: NSLocalizedString("country_code", comment: ""), value: ipInfo.countryCode)
-        addDetailRow(title: NSLocalizedString("region", comment: ""), value: ipInfo.regionCode)
-        addDetailRow(title: NSLocalizedString("city", comment: ""), value: ipInfo.city)
-        addDetailRow(title: NSLocalizedString("postal_code", comment: ""), value: ipInfo.postal)
-//        addDetailRow(title: NSLocalizedString("time_zone", comment: ""), value: ipInfo.timezone)
-//        addDetailRow(title: NSLocalizedString("provider", comment: ""), value: ipInfo.isp)
-//        addDetailRow(title: NSLocalizedString("organization", comment: ""), value: ipInfo.org)
-//        addDetailRow(title: "AS:", value: ipInfo.as)
-    }
-    
-    private func addDetailRow(title: String, value: String?) {
+    func addDetailRow(title: String, value: String?) {
         
         guard let value = value, !value.isEmpty else { return }
         let stack = UIStackView()
@@ -193,21 +142,9 @@ class InformationViewController: UIViewController {
         detailsStackView.addArrangedSubview(stack)
     }
     
-    private func clearUI() {
-        detailsStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        mapView.removeAnnotations(mapView.annotations)
-        mapView.setRegion(MKCoordinateRegion(), animated: false)
-    }
-    
     @objc
     private func reloadButtonTapped() {
         fetchIPInfo()
     }
     
-    private func showErrorAlert(message: String) {
-        
-        let alert = UIAlertController(title: NSLocalizedString("error", comment: ""), message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    }
 }

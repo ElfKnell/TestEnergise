@@ -9,48 +9,43 @@ import UIKit
 import StoreKit
 
 class SettingsViewController: UIViewController {
+    
+    var presenter: SettingsPresenterProtocol!
+    
+    lazy var settingsStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.axis = .vertical
+        stackView.spacing = 16
+        stackView.alignment = .fill
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = .systemGroupedBackground
         title = NSLocalizedString("settings", comment: "")
+        
+        presenter.view = self
         setupSettingsStackView()
+        presenter.viewDidLoad()
     }
     
     private func setupSettingsStackView() {
         
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 16
-        stack.alignment = .fill
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(stack)
-        
-        let rateButton = createButton(title: NSLocalizedString("rate_the_app",
-                                                               comment: "Rate the app button title"),
-                                      action: #selector(rateApp))
-        let shareButton = createButton(title: NSLocalizedString("share_the_app",
-                                                                comment: "Share the app button title"),
-                                       action: #selector(shareApp))
-        let contactButton = createButton(title: NSLocalizedString("contact_us",
-                                                                  comment: "Contact us button title"),
-                                         action: #selector(contactUs))
-
-        stack.addArrangedSubview(rateButton)
-        stack.addArrangedSubview(shareButton)
-        stack.addArrangedSubview(contactButton)
+        view.addSubview(settingsStackView)
         
         NSLayoutConstraint.activate([
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-            stack.widthAnchor.constraint(lessThanOrEqualToConstant: 300),
-            stack.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+            settingsStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            settingsStackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            settingsStackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            settingsStackView.widthAnchor.constraint(lessThanOrEqualToConstant: 300),
+            settingsStackView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
         ])
     }
     
-    private func createButton(title: String, action: Selector) -> UIButton {
+    func createButton(title: String, action: @escaping () -> Void) -> UIButton {
         
         let button = UIButton(type: .system)
         
@@ -63,7 +58,10 @@ class SettingsViewController: UIViewController {
         button.configuration = config
         
         button.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        button.addTarget(self, action: action, for: .touchUpInside)
+        
+        let buttonAction = UIAction { _ in action() }
+        button.addAction(buttonAction, for: .touchUpInside)
+        
         button.accessibilityLabel = title
         button.accessibilityTraits = .button
         
@@ -75,36 +73,4 @@ class SettingsViewController: UIViewController {
         return button
     }
     
-    @objc
-    private func rateApp() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            SKStoreReviewController.requestReview(in: windowScene)
-        }
-    }
-    
-    @objc
-    private func shareApp() {
-        let appId = "id1234567890"
-        guard let url = URL(string: "https://apps.apple.com/app/TestEnergise/\(appId)") else {
-            return
-        }
-        
-        let activityVC = UIActivityViewController(activityItems: [url], applicationActivities: nil)
-        
-        if let popover = activityVC.popoverPresentationController {
-            popover.sourceView = self.view
-            popover.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.minY, width: 0, height: 0)
-            popover.permittedArrowDirections = []
-        }
-        
-        present(activityVC, animated: true)
-    }
-    
-    @objc
-    private func contactUs() {
-        let str = "https://healthy-metal-aa6.notion.site/iOS-Developer-12831b2ac19680068ac3fcd91252b819"
-        if let url = URL(string: str), UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url)
-        }
-    }
 }
